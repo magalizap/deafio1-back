@@ -1,0 +1,38 @@
+[
+  {
+    "title": "La Campagnola",
+    "description": "Mermelada BC - sabor Frutilla x390g",
+    "price": 624,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/690034-800-auto?v=637810653703330000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11281102036",
+    "stock": 147,
+    "id": 1
+  },
+  {
+    "title": "Oreo",
+    "description": "Galletitas 354gr",
+    "price": 555,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/712811-800-auto?v=637946193909070000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11281102032",
+    "stock": 310,
+    "id": 2
+  },
+  {
+    "title": "Playadito Suave",
+    "description": "Yerba Mate X1kg",
+    "price": 679,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/711224-800-auto?v=637938633804770000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11230376006",
+    "stock": 236,
+    "id": 3
+  },
+  {
+    "title": "Cachafaz",
+    "description": "Galletitas Integral Granola",
+    "price": 410,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/192618-800-auto?v=636383534226100000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11121604001",
+    "stock": 350,
+    "id": 4
+  }
+]
