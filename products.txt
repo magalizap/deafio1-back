@@ -34,5 +34,59 @@
     "code": "SKU: 11121604001",
     "stock": 350,
     "id": 4
+  },
+  {
+    "title": "Frutigran",
+    "description": "Galletitas Avena Y Pasas 250 Gr",
+    "price": 293,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/178501-800-auto?v=636383365370530000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11121601001",
+    "stock": 500,
+    "id": 5
+  },
+  {
+    "title": "Traviata",
+    "description": "Galletitas Traviata X506g",
+    "price": 471,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/766464-800-auto?v=638104413698500000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11110102024",
+    "stock": 430,
+    "id": 6
+  },
+  {
+    "title": "Donuts",
+    "description": "Galletitas Donuts Leche X52g",
+    "price": 204,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/705787-800-auto?v=637908178674370000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11120995011",
+    "stock": 630,
+    "id": 7
+  },
+  {
+    "title": "Nesquik",
+    "description": "Cacao Nesquik Polvo 360g",
+    "price": 615,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/767885-800-auto?v=638114025804830000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11250101058",
+    "stock": 260,
+    "id": 8
+  },
+  {
+    "title": "Aguila",
+    "description": "Tableta Chocolate Aguila 70% Cacao X150gr",
+    "price": 760,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/583235-800-auto?v=637234677122300000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11250301013",
+    "stock": 430,
+    "id": 9
+  },
+  {
+    "title": "La Merced",
+    "description": "Yerba Mate La Merced Barcbacua O.c 500g",
+    "price": 500,
+    "thumbnail": "https://jumboargentina.vtexassets.com/arquivos/ids/621310-800-auto?v=637473138291000000&width=800&height=auto&aspect=true",
+    "code": "SKU: 11230306016",
+    "stock": 800,
+    "id": 10
   }
 ]
