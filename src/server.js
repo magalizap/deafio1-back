@@ -1,38 +1,35 @@
 import express from 'express'
-import { ProductManager } from './index.js'
+import productRouter from './routes/product.routes.js'
+import cartRouter from './routes/cart.routes.js'
+import { __dirname } from './path.js'
+import multer from 'multer'
 
-const productManager = new ProductManager('products.txt')
+// Config
 const app = express()
 const PORT = 4000
-
-app.use(express.urlencoded({extended:true}))
-
-//llamo a todos los productos
-app.get('/products', async (req, res) => {
-    let { limit } = req.query
-    const products = await productManager.getProduct()
-    if(limit){
-        res.send(JSON.stringify(products.slice(0, limit)))
-    }else{
-        res.send(JSON.stringify(products))
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/img')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.originalname}`)
     }
 })
 
-//llamo al producto por su id
-app.get('/products/:pid', async (req, res) => {
-    // tuve que modificar mi getProductById
-    const productId = await productManager.getProductById(parseInt(req.params.pid))
-    res.send(JSON.stringify(productId))
 
-    // de esta forma no debo comentar el fs.writeFile en el método getProductByID
-    /*const products = await productManager.getProduct()
-    const productId = products.find(prod => prod.id === parseInt(req.params.pid)) // consulto un usuario dado el id recibido
-    if(productId){
-        res.send(JSON.stringify(productId))
-    }else{
-        res.send(`El producto con el id ${req.params.pid} no se encuentra`)
-    }*/
-    
+// Middlewares
+app.use(express.json()) // para ejecutar JSON
+app.use(express.urlencoded({extended:true})) // req.query
+const upload = (multer({storage: storage}))
+
+// Routes
+app.use('/api/product', productRouter)
+app.use('/api/cart', cartRouter)
+app.use('/static', express.static(__dirname + '/public')) // defino la ruta de mi carpeta pública
+app.post('/upload', upload.single('product'), (req, res) => {
+    console.log(req.body)
+    console.log(req.file)
+    res.send('Imagen subida')
 })
 
 
