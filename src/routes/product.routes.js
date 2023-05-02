@@ -1,9 +1,9 @@
 import { Router } from "express"
 import { ProductManager } from "../productManager.js"
 
-
 const productManager = new ProductManager('./products.txt')
 const productRouter = Router()
+
 
 //llamo a todos los productos
 productRouter.get('/', async (req, res) => {
@@ -14,9 +14,13 @@ productRouter.get('/', async (req, res) => {
         res.send(products.splice(0, limit))
     }else{
         //res.send(JSON.stringify(products))
-        res.send(products)
+        //res.send(products)
+        res.render('home', {
+            products: products
+        })
     }
 })
+
 
 //llamo al producto por su id
 productRouter.get('/:pid', async (req, res) => {
