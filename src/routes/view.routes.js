@@ -8,9 +8,9 @@ const viewRouter = Router()
 viewRouter.get('/realtimeproducts', async (req, res) => {
     let { limit } = req.query
     const products = await productManager.getProduct()
-    req.io.on('connection', async(socket) => { // intentando conexion con socket.io
+    req.io.on('connection', async(socket) => { 
         console.log('Cliente conectado')
-        req.io.emit('get', {products: products})
+        req.io.emit('get', products)
     })
     if(limit){
         //res.send(JSON.stringify(products.slice(0, limit)))
@@ -18,9 +18,7 @@ viewRouter.get('/realtimeproducts', async (req, res) => {
     }else{
         //res.send(JSON.stringify(products))
         //res.send(products)
-        res.render('realtimeproducts', {
-            products: products
-        })
+        res.render('realtimeproducts', products)
     }
 })
 
@@ -29,8 +27,8 @@ viewRouter.post('/realtimeproducts', async (req, res) => {
         const { title, description, price, thumbnail, code, stock, status, category } = req.body
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, category })
 
-        req.io.emit('post', { newProduct : { title, description, price, thumbnail, code, stock, status, category }})  
-        res.render('realtimeproducts', { newProduct : { title, description, price, thumbnail, code, stock, status, category }})
+        req.io.emit('post',  { title, description, price, thumbnail, code, stock, status, category })  
+        res.render('realtimeproducts',  { title, description, price, thumbnail, code, stock, status, category })
         //res.send("Producto creado")
     } catch (error) {
         res.send(error)

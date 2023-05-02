@@ -1,5 +1,5 @@
 [
-  {
+{
     "title": "Parka con Piel Sintética Alaska",
     "description": "La campera es de Gabardina forrada con piel sintetica por dentro. - la cintura es ajustable, tiene bolsillos en el frente (Tiene doble bolsitllo). - Posee cierre y botones para brindar mayor abrigo.",
     "price": 19990,
