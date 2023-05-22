@@ -1,9 +1,14 @@
 const socket = io()
 const products = document.getElementById('products')
 
+const botonChat = document.getElementById('botonChat')
+const parrafosMensajes = document.getElementById('parrafosMensajes')
+const val = document.getElementById('chatBox')
+
+// products
 
 socket.on('get', arrayProducts => {
-
+    products.innerHTML = ''
     arrayProducts.forEach(prod => {
         products.innerHTML += `
             <div class="card">
@@ -53,4 +58,35 @@ socket.on('get', arrayProducts => {
 })
 
 
+// chat
 
+let user
+
+swal.fire({
+    title: 'Ingresa al foro',
+    text: 'Por favor ingrese su nombre de usuario',
+    input: 'text',
+    inputValidator: (valor) => {
+        return !valor && 'Ingrese un valor valido'
+    },
+    allowOutsideClick: false
+}).then(resultado => {
+    user = resultado.value
+    console.log(user)
+})
+
+botonChat.addEventListener('click', () => {
+    if(val.value.trim().length > 0){// consultar si el input no está vacio
+        socket.emit('mensaje', {user: user, message: val.value})
+        val.value = '' // seteo el valor del input
+    } 
+})
+
+socket.on('mensajes', arrayMensajes => {
+    parrafosMensajes.innerHTML = '' //para evitar duplicados
+    arrayMensajes.forEach(info => {
+        parrafosMensajes.innerHTML += `
+        <p class="coment">${info.user}: ${info.message}</p>
+        `
+    })
+})

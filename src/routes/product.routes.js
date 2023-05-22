@@ -1,32 +1,29 @@
 import { Router } from "express"
-import { ProductManager } from "../productManager.js"
+import { productModel } from "../models/Products.js"
 
-const productManager = new ProductManager('./products.txt')
 const productRouter = Router()
+
 
 
 //llamo a todos los productos
 productRouter.get('/', async (req, res) => {
     let { limit } = req.query
-    const products = await productManager.getProduct()
+    const products = await productModel.find() //.explain('executionStats')
+
     if(limit){
-        //res.send(JSON.stringify(products.slice(0, limit)))
-        res.send(products.splice(0, limit))
+        let productLimit = await productModel.find().limit(limit) ///?limit=4
+        res.send(productLimit)
     }else{
-        //res.send(JSON.stringify(products))
-        //res.send(products)
-        res.render('home', {
-            products: products
-        })
+        res.send(products)
     }
+    
 })
 
 
 //llamo al producto por su id
 productRouter.get('/:pid', async (req, res) => {
     try {
-        const productId = await productManager.getProductById(parseInt(req.params.pid))
-        //res.send(JSON.stringify(productId))  // para ver en formato json
+        const productId = await productModel.findOne({_id: req.params.pid}) // id de ej. para ver funcionamiento '646589ba282c7c17224fd925'
         res.send(productId)   // formato de objetos
     } catch (error) {
         res.send(error)
@@ -37,7 +34,7 @@ productRouter.get('/:pid', async (req, res) => {
 productRouter.post('/', async (req, res) => {
     try {
         const { title, description, price, thumbnail, code, stock, status, category } = req.body
-        await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, category })
+        await productModel.insertMany([{title, description, price, thumbnail, code, stock, status, category}])
         res.send("Producto creado")
     } catch (error) {
         res.send(error)
@@ -47,9 +44,9 @@ productRouter.post('/', async (req, res) => {
 
 productRouter.put('/:pid', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid)
-        const {title, description, price, thumbnail, code, stock, status, category} = req.body
-        await productManager.updateProduct(id, {title, description, price, thumbnail, code, stock, status, category})
+        const _id = req.params.pid
+        const {stock} = req.body
+        await productModel.updateOne({_id}, {$inc: {stock: stock}}) //incremento el valor del stock del producto seleccionado
         res.send("Producto actualizado")
     } catch (error) {
         res.send(error)
@@ -59,8 +56,8 @@ productRouter.put('/:pid', async (req, res) => {
 
 productRouter.delete('/:pid', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid)
-        await productManager.deleteProduct(id)
+        const id = req.params.pid
+        await productModel.deleteOne({_id: id})
         res.send("Producto eliminado")
     } catch (error) {
         res.send(error)
