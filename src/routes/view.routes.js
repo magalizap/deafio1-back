@@ -3,20 +3,20 @@ import { productModel } from "../models/Products.js"
 const viewRouter = Router()
 
 viewRouter.get('/realtimeproducts', async (req, res) => {
+    let { status } = req.query
     let { limit } = req.query
+    let { page } = req.query
+    let { price } = req.query
     const products = await productModel.find()
     req.io.on('connection', async(socket) => { 
         console.log('Client connected')
         req.io.emit('get', products)
     })
-    if(limit){
-        let productLimit = await productModel.find().limit(limit) ///?limit=4
-        res.render('realtimeproducts', productLimit)
-    }else{
-        res.render('realtimeproducts', products)
-        //res.send(products)
-    }
+
+    const getQuerys = await productModel.paginate({status: status ?? true}, {limit: limit ?? 10, page: page ?? 1, sort: {price: price ?? -1}})
     
+    //res.send(getQuerys)
+    res.render('realtimeproducts', getQuerys)
 })
 
 viewRouter.post('/realtimeproducts', async (req, res) => {
