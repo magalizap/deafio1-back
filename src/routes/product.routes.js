@@ -8,17 +8,23 @@ const productRouter = Router()
 //llamo a todos los productos
 productRouter.get('/', async (req, res) => {
 
-    let { status } = req.query
-    let { limit } = req.query
-    let { price } = req.query
-    let {page} = req.query
-    //const products = await productModel.find()//.explain('executionStats')
-    
-    const result = await productModel.paginate({status: status ?? true}, {limit: limit ?? 10, page: page ?? 1, sort: {price: price ?? 0}, lean: true})
+    try {
+        let { status } = req.query
+        let { limit } = req.query
+        let { price } = req.query
+        let {page} = req.query
+        //const products = await productModel.find()//.explain('executionStats')
+        
+        const result = await productModel.paginate({status: status ?? true}, {limit: limit ?? 10, page: page ?? 1, sort: {price: price ?? 0}, lean: true})
 
-    result.prevLink = result.hasPrevPage ? `http://localhost:4000/api/product?page=${result.prevPage}` : null
-    result.nextLink = result.hasNextPage ? `http://localhost:4000/api/product?page=${result.nextPage}`: null
-    res.send(result)
+        result.prevLink = result.hasPrevPage ? `http://localhost:4000/api/product?page=${result.prevPage}` : null
+        result.nextLink = result.hasNextPage ? `http://localhost:4000/api/product?page=${result.nextPage}`: null
+        res.send(result)
+
+
+    } catch (error) {
+        res.send(error)
+    }
     
 }) 
 

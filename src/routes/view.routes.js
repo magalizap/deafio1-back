@@ -3,21 +3,23 @@ import { productModel } from "../models/Products.js"
 const viewRouter = Router()
 
 viewRouter.get('/realtimeproducts', async (req, res) => {
-    let { status } = req.query
-    let { limit } = req.query
-    let { page } = req.query
-    let { price } = req.query
+    let { status, limit, page, price } = req.query
+    
     const products = await productModel.find()
-    req.io.on('connection', async(socket) => { 
-        console.log('Client connected')
-        req.io.emit('get', products)
+    req.io.on('connection', async (socket) => {
+      console.log('Client connected')
+      req.io.emit('get', products)
     })
-
-    const getQuerys = await productModel.paginate({status: status ?? true}, {limit: limit ?? 10, page: page ?? 1, sort: {price: price ?? -1}})
+  
+    const getQuerys = await productModel.paginate(
+      { status: status ?? true },
+      { limit: limit ?? 10, page: page ?? 1, sort: { price: price ?? -1 } }
+    )
     
     //res.send(getQuerys)
-    res.render('realtimeproducts', getQuerys)
-})
+    res.render('realtimeproducts', { data: getQuerys })
+  })
+  
 
 viewRouter.post('/realtimeproducts', async (req, res) => {
     try {

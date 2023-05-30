@@ -1,6 +1,6 @@
 const socket = io()
 const products = document.getElementById('products')
-
+const buttonSwal = document.getElementById('buttonSwal')
 const botonChat = document.getElementById('botonChat')
 const parrafosMensajes = document.getElementById('parrafosMensajes')
 const val = document.getElementById('chatBox')
@@ -62,18 +62,22 @@ socket.on('get', arrayProducts => {
 
 let user
 
-swal.fire({
-    title: 'Ingresa al foro',
-    text: 'Por favor ingrese su nombre de usuario',
-    input: 'text',
-    inputValidator: (valor) => {
-        return !valor && 'Ingrese un valor valido'
-    },
-    allowOutsideClick: false
-}).then(resultado => {
-    user = resultado.value
-    console.log(user)
+buttonSwal.addEventListener('click', () => {
+    swal.fire({
+        title: 'Ingresa al foro',
+        text: 'Por favor ingrese su nombre de usuario',
+        input: 'text',
+        inputValidator: (valor) => {
+            return !valor && 'Ingrese un valor valido'
+        },
+        allowOutsideClick: false
+    }).then(resultado => {
+        user = resultado.value
+        console.log(user)
+    })
+    
 })
+
 
 botonChat.addEventListener('click', () => {
     if(val.value.trim().length > 0){// consultar si el input no está vacio
