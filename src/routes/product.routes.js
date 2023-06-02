@@ -23,7 +23,7 @@ productRouter.get('/', async (req, res) => {
 
 
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
     
 }) 
@@ -33,9 +33,9 @@ productRouter.get('/', async (req, res) => {
 productRouter.get('/:pid', async (req, res) => {
     try {
         const productId = await productModel.findOne({_id: req.params.pid}) // id de ej. para ver funcionamiento '646589ba282c7c17224fd925'
-        res.send(productId)   // formato de objetos
+        res.status(200).send(productId)
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 
 })
@@ -44,9 +44,10 @@ productRouter.post('/', async (req, res) => {
     try {
         const { title, description, price, thumbnail, code, stock, status, category } = req.body
         await productModel.insertMany([{title, description, price, thumbnail, code, stock, status, category}])
-        res.send("Producto creado")
+        res.status(200).send("Producto creado")
+
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 
 })
@@ -56,9 +57,9 @@ productRouter.put('/:pid', async (req, res) => {
         const _id = req.params.pid
         const {stock} = req.body
         await productModel.updateOne({_id}, {$inc: {stock: stock}}) //incremento el valor del stock del producto seleccionado
-        res.send("Producto actualizado")
+        res.status(200).send("Producto actualizado")
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 
 })
@@ -67,9 +68,10 @@ productRouter.delete('/:pid', async (req, res) => {
     try {
         const id = req.params.pid
         await productModel.deleteOne({_id: id})
-        res.send("Producto eliminado")
+
+        res.status(200).send("Producto eliminado")
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 

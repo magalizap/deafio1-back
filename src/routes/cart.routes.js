@@ -6,9 +6,10 @@ const cartRouter = Router()
 cartRouter.post('/', async (req, res) => {
     try {
         const cart = await cartModel.create([{products:[]}])
-        res.send(cart)
+        //res.send(cart)
+        res.status(200).send(cart)
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 
@@ -16,10 +17,11 @@ cartRouter.post('/', async (req, res) => {
 cartRouter.get('/:cid', async (req, res) => {
     try {
         const cartId = await cartModel.findOne({_id: req.params.cid}).populate('products.id_prod')
-        const cartJSON = JSON.stringify(cartId)
-        res.send(cartJSON)
+        res.status(200).send(cartId)
+        //const cartJSON = JSON.stringify(cartId)
+        //res.send(cartJSON)
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 
@@ -36,11 +38,12 @@ cartRouter.post("/:cid/product/:pid", async (req, res) => {
     
         cart.products.push(addProductToCart)// lo pusheo al carrito que busque
     
-        await  cart.save()/// el save()
-        res.send("El producto se ha añadido correctamente a su carrito");
+        await cart.save()
+        res.status(200).send("El producto se ha añadido correctamente a su carrito")
+
     
     } catch (error) {
-         console.log(error);
+        res.status(500).send(error)
     }
     
 })
@@ -55,9 +58,9 @@ cartRouter.delete('/:cid/product/:pid', async (req, res) => {
 
         cart.products.splice({id_prod: pid}, 1)
         await cart.save()
-        res.send('Producto eliminado')
+        res.status(200).send('Producto eliminado')
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 
@@ -68,9 +71,9 @@ cartRouter.delete('/:cid', async (req, res) => {
         emptyCart.products = []
 
         await emptyCart.save()
-        res.send('Carrito vacío')
+        res.status(200).send('Carrito vacío')
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 
@@ -83,14 +86,15 @@ cartRouter.put('/:cid/product/:pid', async (req, res) => {
         const cartId = await cartModel.findById({_id: cid})
         const arrayProducts = cartId.products
         const findIdProd =  arrayProducts.findIndex((prod) => prod.id_prod == pid)
+        // sumo o resto a mi cant ya especificada anteriormente
+        arrayProducts[findIdProd].quantity = arrayProducts[findIdProd].quantity + quantity 
 
-        arrayProducts[findIdProd].quantity = quantity
+        await cartModel.updateOne({_id: cid}, {products: arrayProducts}) //actualizo la cantidad del producto seleccionado
 
-        await cartModel.updateOne({_id: cid}, {products: arrayProducts})
-        res.send('cantidad modificada')
+        res.status(200).send('cantidad modificada')
 
     } catch (error) {
-        res.send(error)
+        res.status(500).send(error)
     }
 })
 
@@ -99,10 +103,15 @@ cartRouter.put('/:cid', async (req, res) => { //revisar
         const cid = req.params.cid
         const {pid} = req.body
         const {quantity} = req.body
-        await cartModel.updateOne({_id: cid}, {products: [{id_prod: pid}, {quantity: quantity}]})
-        res.send('Carrito actualizado')
+        
+        const cartId = await cartModel.findById({ _id: cid })
+
+        cartId.products = {products: [{id_prod: pid, quantity: quantity}]}
+
+        res.status(200).send('Carrito actualizado')
+        
     } catch (error) {   
-        res.send(error)
+        res.status(500).send(error)
     }
 
 })
