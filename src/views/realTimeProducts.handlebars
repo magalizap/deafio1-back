@@ -1,2 +1,21 @@
-<h1 class="title">Mis productos en actualizados:</h1>
+
+<div class="title" id="welcome"></div>
 <div class="container" id="products"></div>
+<button onclick="location.href='/api/users/logout'">LOGOUT</button>
+<a href={{this.prevLink}}>BACK</a>
+<a href={{this.nextLink}}>NEXT</a>
+
+<!--
+<h1>Mis producto:</h1>
+{{#each renderProducts}}
+<div>
+    <h2>Titulo: {{this.title}}</h2>
+    <p>Descripción: {{this.description}}</p>
+    <p>Precio: {{this.price}}</p>
+    <p>Código: {{this.code}}</p>
+    <p>Stock: {{this.stock}}</p>
+    <p>Estado: {{this.status}}</p>
+    <p>Categoría: {{this.category}}</p>
+</div>
+{{/each}}
+-->

@@ -3,24 +3,27 @@ import { productModel } from "../models/Products.js"
 
 const productRouter = Router()
 
-
+// ESTA RUTA SE USA CON POSTMAN
 
 //llamo a todos los productos
 productRouter.get('/', async (req, res) => {
 
     try {
-        let { status } = req.query
-        let { limit } = req.query
-        let { price } = req.query
-        let {page} = req.query
+        let { status, limit, page, price } = req.query
         //const products = await productModel.find()//.explain('executionStats')
-        
-        const result = await productModel.paginate({status: status ?? true}, {limit: limit ?? 10, page: page ?? 1, sort: {price: price ?? 0}, lean: true})
+        const getQuerys = await productModel.paginate(
+            { status: status ?? true },                   
+            { limit: limit || 10, page: page ?? 1, sort: { price: price ?? -1 } }
+        )
 
-        result.prevLink = result.hasPrevPage ? `http://localhost:4000/api/product?page=${result.prevPage}` : null
-        result.nextLink = result.hasNextPage ? `http://localhost:4000/api/product?page=${result.nextPage}`: null
-        res.send(result)
+        getQuerys.prevLink = getQuerys.hasPrevPage ? `http://localhost:4000/api/products?page=${getQuerys.prevPage}` : null
+        getQuerys.nextLink = getQuerys.hasNextPage ? `http://localhost:4000/api/products?page=${getQuerys.nextPage}`: null
 
+        const renderProducts = getQuerys.docs.map(({price, title, stock, status, code, category}) => {
+            return {price, title, stock, status, code, category}
+        })
+
+        res.render('realtimeproducts', {renderProducts})
 
     } catch (error) {
         res.status(500).send(error)
@@ -44,7 +47,8 @@ productRouter.post('/', async (req, res) => {
     try {
         const { title, description, price, thumbnail, code, stock, status, category } = req.body
         await productModel.insertMany([{title, description, price, thumbnail, code, stock, status, category}])
-        res.status(200).send("Producto creado")
+        res.render('realtimeproducts',  { title, description, price, thumbnail, code, stock, status, category })
+        //res.status(200).send("Producto creado")
 
     } catch (error) {
         res.status(500).send(error)

@@ -3,6 +3,8 @@ import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import viewRouter from './routes/view.routes.js'
 import chatRouter from './routes/chat.routes.js'
+import sessionRouter from './routes/session.routes.js'
+import userRouter from './routes/users.routes.js'
 import { __dirname, } from './path.js'
 import multer from 'multer'
 import { engine } from 'express-handlebars'
@@ -10,8 +12,13 @@ import * as path from 'path'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
 import 'dotenv/config.js'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
 
 
+//import passport from 'passport'
+//import { engine } from 'express-handlebars'
 
 // Config
 const app = express()
@@ -36,6 +43,21 @@ const server = app.listen(PORT, () => {
 app.use(express.json()) // para ejecutar JSON 
 app.use(express.urlencoded({extended: true})) // req.query
 const upload = (multer({storage: storage}))
+app.use(cookieParser(process.env.SIGNED_COOKIE))
+app.use(session({
+
+    store: MongoStore.create({
+        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
+        ttl: 210
+    }),
+
+    secret: process.env.SESSION_SECRET,
+    resave: false, //para que mi sesión se mantenga activa
+    saveUninitialized: true // guardo mi sesión aunq no contenga info
+}))
+
+
 
 //Mongoose
 mongoose.connect(process.env.URL_MONGODB_ATLAS)
@@ -44,7 +66,6 @@ mongoose.connect(process.env.URL_MONGODB_ATLAS)
 
 
 // ServerIO 
-//const io = new Server(server, {cors: {origin:'', credentials: true}}) //llamo a mi servidor
 const io = new Server(server, {cors: {origin: '*'}}) 
 
 
@@ -57,15 +78,16 @@ app.use((req, res, next) => {
 
 
 // Routes
-app.use('/api/product', productRouter)
+app.use('/api/products', productRouter)
 app.use('/api/cart', cartRouter)
 app.use('/', viewRouter)
 app.use('/chat', chatRouter)
+app.use('/api/session', sessionRouter)
+app.use('/api/users', userRouter)
 app.use('/', express.static(__dirname + '/public')) // defino la ruta de mi carpeta pública
 app.post('/upload', upload.single('product'), (req, res) => {
     console.log(req.body)
     console.log(req.file)
     res.send('Imagen subida')
 })
-
 

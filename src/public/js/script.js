@@ -3,11 +3,26 @@ const products = document.getElementById('products')
 const buttonSwal = document.getElementById('buttonSwal')
 const botonChat = document.getElementById('botonChat')
 const parrafosMensajes = document.getElementById('parrafosMensajes')
+const welcome = document.getElementById('welcome')
 const val = document.getElementById('chatBox')
 
 // products
+socket.on('user', userData => {
 
+    if(userData.user.isAdmin){
+        welcome.innerHTML = `
+        <p>Bienvenido/a ${userData.user.first_name}</p>
+        <p>tienes el rol de: Administrador</p>
+        `
+    }else{
+        welcome.innerHTML = `
+        <p>Bienvenido/a ${userData.user.first_name}</p>
+        <p>tienes el rol de: Usuario</p>
+        `
+    }
+})
 socket.on('get', arrayProducts => {
+    
     products.innerHTML = ''
     arrayProducts.forEach(prod => {
         products.innerHTML += `
