@@ -7,27 +7,30 @@ const productRouter = Router()
 
 //llamo a todos los productos
 productRouter.get('/', async (req, res) => {
+    productRouter.get('/', async (req, res) => {
 
-    try {
-        let { status, limit, page, price } = req.query
-        //const products = await productModel.find()//.explain('executionStats')
-        const getQuerys = await productModel.paginate(
-            { status: status ?? true },                   
-            { limit: limit || 10, page: page ?? 1, sort: { price: price ?? -1 } }
-        )
-
-        getQuerys.prevLink = getQuerys.hasPrevPage ? `http://localhost:4000/api/products?page=${getQuerys.prevPage}` : null
-        getQuerys.nextLink = getQuerys.hasNextPage ? `http://localhost:4000/api/products?page=${getQuerys.nextPage}`: null
-
-        const renderProducts = getQuerys.docs.map(({price, title, stock, status, code, category}) => {
-            return {price, title, stock, status, code, category}
-        })
-
-        res.render('realtimeproducts', {renderProducts})
-
-    } catch (error) {
-        res.status(500).send(error)
-    }
+        try {
+            let { status, limit, page, price } = req.query
+            //const products = await productModel.find()//.explain('executionStats')
+            const getQuerys = await productModel.paginate(
+                { status: status ?? true },                   
+                { limit: limit || 10, page: page ?? 1, sort: { price: price ?? -1 }}
+            )
+    
+            getQuerys.prevLink = getQuerys.hasPrevPage ? `http://localhost:4000/api/products?page=${getQuerys.prevPage}` : null
+            getQuerys.nextLink = getQuerys.hasNextPage ? `http://localhost:4000/api/products?page=${getQuerys.nextPage}`: null
+    
+            const renderProducts = getQuerys.docs.map(({price, title, stock, status, code, category}) => {
+                return {price, title, stock, status, code, category}
+            })
+    
+            res.render('realtimeproducts', {renderProducts})
+    
+        } catch (error) {
+            res.status(500).send(error)
+        }
+        
+    })
     
 }) 
 

@@ -8,15 +8,14 @@ const val = document.getElementById('chatBox')
 
 // products
 socket.on('user', userData => {
-
-    if(userData.user.isAdmin){
+    if(userData.payload.isAdmin){
         welcome.innerHTML = `
-        <p>Bienvenido/a ${userData.user.first_name}</p>
+        <p>Bienvenido/a ${userData.payload.first_name} ${userData.payload.last_name}</p>
         <p>tienes el rol de: Administrador</p>
         `
     }else{
         welcome.innerHTML = `
-        <p>Bienvenido/a ${userData.user.first_name}</p>
+        <p>Bienvenido/a ${userData.payload.first_name} ${userData.payload.last_name}</p>
         <p>tienes el rol de: Usuario</p>
         `
     }
@@ -69,7 +68,6 @@ socket.on('get', arrayProducts => {
             </div>
             `
     })
-
 })
 
 

@@ -1,0 +1,88 @@
+import passport from "passport";
+import { userModel } from "./models/User.js";
+import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GithubStrategy } from "passport-github2";
+import { compareData, hashData } from "./path.js";
+
+// ESTRATEGIA LOCAL DE LOGIN
+passport.use('login', new LocalStrategy({
+    passReqToCallback: true,
+    usernameField: 'email'
+}, async(req, email, password, done) => {
+    try {
+        const user = await userModel.findOne({email})
+        if(!user){
+            return done(null, false)
+        }
+        const isPasswordValid = await compareData(password, user.password) 
+        if(!isPasswordValid){
+            return done(null, false)
+        }
+        done(null, user)
+    } catch (error) {
+        done(error)
+    }
+}))
+
+// ESTRATEGIA LOCAL DE SIGNUP
+passport.use('signup', new LocalStrategy({
+    passReqToCallback: true, 
+    usernameField: 'email'
+}, async(req, email, password, done) => {
+    try {
+        const {password} = req.body
+        const user = await userModel.findOne({email})
+        if(user){
+            return done(null, false)
+        }
+        const hashPassword = await hashData(password)
+        const newUser = {...req.body, password: hashPassword}
+        const result = await userModel.create(newUser)
+        return done(null, result)
+    } catch (error) {
+        done(error)
+    }
+
+}))
+
+// ESTRATEGIA LOGIN DE GITHUB
+passport.use('githubSignup', new GithubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:4000/api/users/github"
+}, async(accessToken, refreshToken, profile, done) => {
+    console.log(profile)
+    const {name, email} = profile._json
+    try {
+        const user = await userModel.findOne({email})
+        if(user){
+            return done(null, user)
+        }
+        const newUser = {
+            first_name: name.split(' ')[0],
+            last_name: name.split(' ')[2] || '',
+            email,
+            password: ' '
+        }
+        const saveUser = await userModel.create(newUser)
+        done(null, saveUser)
+    } catch (error) {   
+        done(error)
+    }
+}))
+
+
+
+// SERIALIZAR Y DESERIALIZAR
+passport.serializeUser((user, done) => {
+    done(null, user._id)
+})
+
+passport.deserializeUser(async(id, done) => {
+    try {
+        const user = await userModel.findById(id)
+        done(null, user)
+    } catch (error) {
+        done(error)
+    }
+})

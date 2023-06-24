@@ -15,10 +15,9 @@ import 'dotenv/config.js'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
+import passport from 'passport'
+import './passportStrategies.js'
 
-
-//import passport from 'passport'
-//import { engine } from 'express-handlebars'
 
 // Config
 const app = express()
@@ -32,7 +31,18 @@ const storage = multer.diskStorage({
     }
 })
 
-app.engine('handlebars', engine()) //trabajo con hbs
+app.engine('handlebars', engine({runtimeOptions: 
+    { allowProtoPropertiesByDefault: true, 
+    allowProtoMethodsByDefault: true},
+    helpers: {eq: function(a, b, options){
+        if(a === b){
+            return options.fn(this)
+        }else{
+            return options.inverse(this)
+        }
+    }}
+    
+})) //trabajo con hbs
 app.set('view engine', 'handlebars') // vistas hbs
 app.set('views', path.resolve(__dirname, './views')) //mi ruta
 const server = app.listen(PORT, () => {
@@ -56,7 +66,8 @@ app.use(session({
     resave: false, //para que mi sesión se mantenga activa
     saveUninitialized: true // guardo mi sesión aunq no contenga info
 }))
-
+app.use(passport.initialize()) // implementamos passport
+app.use(passport.session())
 
 
 //Mongoose
@@ -65,12 +76,9 @@ mongoose.connect(process.env.URL_MONGODB_ATLAS)
 .catch((error) => console.log('Error en MongoDB Atlas:', error))
 
 
-// ServerIO 
+// ServerIO y acceso a las rutas
 const io = new Server(server, {cors: {origin: '*'}}) 
 
-
-
-//acceso de io p/las rutas
 app.use((req, res, next) => {
     req.io = io
     return next()

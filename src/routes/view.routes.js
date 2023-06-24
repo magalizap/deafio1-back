@@ -10,7 +10,7 @@ viewRouter.get('/realtimeproducts', async (req, res) => {
       
     const getQuerys = await productModel.paginate(
       { status: status ?? true },                   
-      { limit: limit || 5, page: page ?? 1, sort: { price: price ?? -1 } }
+      { limit: limit || 6, page: page ?? 1, sort: { price: price ?? -1 }, lean: true }
     )
 
     
@@ -24,7 +24,7 @@ viewRouter.get('/realtimeproducts', async (req, res) => {
     req.io.on('connection', async (socket) => {
       console.log('Client connected')
       req.io.emit('get', renderProducts)
-      req.io.emit('user',  {user: req.session.user})
+      req.io.emit('user',  {payload: req.user})
      
     })
 
