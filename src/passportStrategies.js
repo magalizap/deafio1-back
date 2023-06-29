@@ -3,6 +3,7 @@ import { userModel } from "./models/User.js";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { compareData, hashData } from "./path.js";
+import { cartModel } from "./models/Carts.js";
 
 // ESTRATEGIA LOCAL DE LOGIN
 passport.use('login', new LocalStrategy({
@@ -38,6 +39,10 @@ passport.use('signup', new LocalStrategy({
         const hashPassword = await hashData(password)
         const newUser = {...req.body, password: hashPassword}
         const result = await userModel.create(newUser)
+
+        const cart = await cartModel.create({products:[]})
+        result.idCart = cart._id
+        await result.save()
         return done(null, result)
     } catch (error) {
         done(error)
@@ -65,6 +70,10 @@ passport.use('githubSignup', new GithubStrategy({
             password: ' '
         }
         const saveUser = await userModel.create(newUser)
+        const cart = await cartModel.create({products:[]})
+        saveUser.idCart = cart._id
+        await saveUser.save()
+        
         done(null, saveUser)
     } catch (error) {   
         done(error)

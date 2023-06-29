@@ -26,6 +26,10 @@ const userSchema = new Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    idCart: {
+        type: Schema.Types.ObjectId,
+        ref: 'carts'
     }
 })
 
